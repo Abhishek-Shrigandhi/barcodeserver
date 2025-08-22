@@ -28,13 +28,13 @@ wss.on('connection', (socket) => {
     console.log('Received barcode data:', message);
 
     // First message "REGISTER_PC" marks this as the PC client
-    if (msg === "REGISTER_PC") {
+    if (message === "REGISTER_PC") {
       pcClient = ws;
       ws.send("PC registered");
     } else {
       // Forward all other messages to PC if available
       if (pcClient && pcClient.readyState === WebSocket.OPEN) {
-        pcClient.send(msg);
+        pcClient.send(message);
       }
     }
     // simulateKeyboardInput(message);
