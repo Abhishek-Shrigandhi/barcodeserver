@@ -5,14 +5,14 @@ const WebSocket = require("ws");
 const PORT = process.env.PORT || 10000;
 
 const app = express();
-
-// Health check route (Render needs this!)
 app.get("/", (req, res) => res.send("WebSocket server running ✅"));
 
 const server = createServer(app);
 const wss = new WebSocket.Server({ server });
 
-// Heartbeat for keepalive
+let pcClient = null; // store the connected PC client
+
+// Heartbeat
 function heartbeat() {
   this.isAlive = true;
 }
@@ -27,15 +27,24 @@ wss.on("connection", (ws) => {
     msg = msg.toString();
     console.log("Received:", msg);
 
+    // If PC registers itself
     if (msg === "REGISTER_PC") {
+      pcClient = ws; // remember this socket as the PC client
       ws.send("Connected to server as PC client ✅");
-    } else {
-      ws.send(`Echo: ${msg}`);
+      return;
+    }
+
+    // Otherwise, assume it's from mobile → forward to PC
+    if (pcClient && pcClient.readyState === WebSocket.OPEN) {
+      pcClient.send(`From mobile: ${msg}`);
     }
   });
 
   ws.on("close", () => {
     console.log("Client disconnected");
+    if (ws === pcClient) {
+      pcClient = null; // clear if PC disconnects
+    }
   });
 });
 
