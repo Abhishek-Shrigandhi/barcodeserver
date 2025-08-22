@@ -1,23 +1,22 @@
-// const express = require("express");
-// const { WebSocketServer } = require("ws");
+const express = require("express");
+const { WebSocketServer } = require("ws");
 
-// const app = express();
+const app = express();
 const PORT = process.env.PORT || 8080;
-
 
 // const path = require('path');
 // const fs = require('fs');
 
 // // HTTP server for Render
-// const server = app.listen(PORT, () => {
-//   console.log(`Server running on port ${PORT}`);
-// });
+const server = app.listen(PORT, () => {
+  console.log(`Server running on port ${PORT}`);
+});
 
-const WebSocket = require('ws');
-const wss = new WebSocket.Server(PORT);
+// const WebSocket = require('ws');
+// const wss = new WebSocket.Server({ host: '0.0.0.0', port: 8080 });
 
 // WebSocket server
-// const wss = new WebSocketServer({ server });
+const wss = new WebSocketServer({ server });
 
 let pcClient = null; // store PC connection
 
@@ -45,9 +44,6 @@ wss.on('connection', (socket) => {
     console.log('Client disconnected');
   });
 });
-
-console.log(`WebSocket server running on port ${PORT}`);
-
 
 // Function to simulate keyboard input using AutoHotkey
 const { exec } = require('child_process');
